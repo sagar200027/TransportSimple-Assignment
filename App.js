@@ -1,28 +1,24 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
-import Onboarding from "./screens/Onboarding";
+import OnboardingNavigator from "./screens/OnboardingNavigator";
 import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MainNavigator from "./screens/MainNavigator";
+import { Provider } from "react-redux";
+import store from "./redux/Store";
+import Main from "./screens/Main";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    const getToken = async () => {
-      const user = await AsyncStorage.getItem("user");
-      if (user) {
-        setIsLoggedIn(true);
-      }
-      getToken();
-    };
-  });
-
   return (
-    <NavigationContainer>
-      {isLoggedIn ? <MainNavigator /> : <Onboarding />}
-    </NavigationContainer>
+    <SafeAreaProvider style={{flex:1}}>
+      <NavigationContainer>
+        <Provider store={store}>
+          <Main />
+        </Provider>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }
 

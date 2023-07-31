@@ -9,7 +9,7 @@ import MainNavigator from "./MainNavigator";
 
 const Stack = createNativeStackNavigator();
 
-const Onboarding = () => {
+const OnboardingNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="SplashScreen" component={SplashScreen} />
@@ -21,7 +21,7 @@ const Onboarding = () => {
   );
 };
 
-export default Onboarding;
+export default OnboardingNavigator;
 
 const styles = StyleSheet.create({
   main: {
