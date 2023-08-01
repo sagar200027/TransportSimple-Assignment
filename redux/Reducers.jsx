@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
-  homeColor: "",
+  homeColor: "#07B594",
 };
 
 const sliceComp = createSlice({
@@ -18,7 +18,8 @@ const sliceComp = createSlice({
       // console.log("status arr", arr);
       let countCompleted = 0;
       let countUnCompleted = 0;
-      const countArr = arr.map(({ item }) => {
+      arr.map((item) => {
+        console.log("status", item);
         if (item == "completed") {
           countCompleted++;
         } else {
@@ -34,7 +35,12 @@ const sliceComp = createSlice({
           state.homeColor = "#F89623";
         }
       }
-      // console.log("status arr 2", state.homeColor);
+      console.log(
+        "status arr 2",
+        countCompleted,
+        countUnCompleted,
+        state.homeColor
+      );
     },
   },
 });

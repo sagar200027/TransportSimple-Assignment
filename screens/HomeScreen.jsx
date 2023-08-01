@@ -28,29 +28,31 @@ const HomeScreen = () => {
 
   useFocusEffect(
     useCallback(() => {
-      const todosCall = async () => {
-        const token = await AsyncStorage.getItem("token");
-        const user = await AsyncStorage.getItem("user");
-        console.log("token", token, user);
-        fetch(`http://13.126.244.224/api/task?phone=%2B91${"7206723227"}`, {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            // console.log("todos list", res?.data?.task);
-            const arr = res?.data?.task?.reverse();
-            setTaskList(arr);
-            const statusArray = arr.map((item) => item.status);
-            dispatch(homeBgColor(statusArray));
-          });
-      };
       todosCall();
     }, [])
   );
+
+  const todosCall = async () => {
+    const token = await AsyncStorage.getItem("token");
+    let user = await AsyncStorage.getItem("user");
+    const phone = JSON.parse(user)?.phone.substring(3);
+    console.log("token", phone);
+    fetch(`http://13.126.244.224/api/task?phone=%2B91${phone}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("todos list", res?.data?.task);
+        const arr = res?.data?.task?.reverse();
+        setTaskList(arr);
+        const statusArray = arr.map((item) => item.status);
+        dispatch(homeBgColor(statusArray));
+      });
+  };
 
   return (
     <SafeAreaView style={[styles.main, { backgroundColor: homeColor }]}>
@@ -84,7 +86,7 @@ const HomeScreen = () => {
             // console.log("todo item", item);
             return (
               <View style={{ width: "100%" }}>
-                <TodoCard item={item} />
+                <TodoCard item={item} todosCall={todosCall} />
               </View>
             );
           }}

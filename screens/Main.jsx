@@ -13,6 +13,7 @@ const Main = () => {
   useEffect(() => {
     const getToken = async () => {
       const token = await AsyncStorage.getItem("token");
+      console.log();
       if (token) {
         setIsLoggedIn(true);
       }
@@ -22,7 +23,7 @@ const Main = () => {
 
   return (
     <SafeAreaView style={styles.main}>
-      {user || isLoggedIn ? <MainNavigator /> : <OnboardingNavigator />}
+      {isLoggedIn || user ? <MainNavigator /> : <OnboardingNavigator />}
     </SafeAreaView>
   );
 };

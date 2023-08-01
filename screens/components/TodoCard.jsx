@@ -1,17 +1,57 @@
 import { Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image1 from "../images/homescreen/image1.svg";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const TodoCard = ({ item }) => {
+const TodoCard = ({ item, todosCall }) => {
   const navigation = useNavigation();
   const [bgColor, setBgColor] = useState("#FFA95A");
   const [expanded, setExpanded] = useState(false);
   // console.log("inside item", item);
+
+  const handleCompleteTask = async () => {
+    setExpanded(false);
+    const token = await AsyncStorage.getItem("token");
+    const user = await AsyncStorage.getItem("user");
+    // console.log("todo details",user?.phone);
+    fetch("http://13.126.244.224/api/task", {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone: JSON.parse(user)?.phone,
+        uniquelink: item?.uniquelink,
+        status: "completed",
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("update task", res);
+        setBgColor("white");
+        todosCall();
+      })
+      .catch((err) => {});
+  };
+
+  useEffect(() => {
+    if (item?.status == "completed") {
+      setBgColor("white");
+    }
+  }, []);
+
   return (
     <Pressable
-      onPress={() => setExpanded((prev) => !prev)}
-      style={[styles.main, { backgroundColor: bgColor }]}
+      onPress={() => {
+        setExpanded((prev) => !prev);
+      }}
+      disabled={bgColor == "white" ? true : false}
+      style={[
+        styles.main,
+        { backgroundColor: item?.status == "completed" ? "white" : bgColor },
+      ]}
     >
       <View
         style={{
@@ -42,10 +82,7 @@ const TodoCard = ({ item }) => {
             <Text style={styles.buttonText}>Ignore</Text>
           </Pressable>
           <Pressable
-            onPress={() => {
-              setBgColor("white");
-              setExpanded(false);
-            }}
+            onPress={handleCompleteTask}
             style={[styles.buttons, { backgroundColor: "#8AF9A2" }]}
           >
             <Text style={styles.buttonText}>Complete</Text>
