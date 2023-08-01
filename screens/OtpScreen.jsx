@@ -14,15 +14,40 @@ import { useNavigation } from "@react-navigation/native";
 import { baseURL } from "../Constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get("window");
 
-const OtpScreen = () => {
+const OtpScreen = (props) => {
+  const { phone } = props?.route?.params;
   const navigation = useNavigation();
   const [otp, setOtp] = useState("");
 
   const handleVerify = () => {
-    navigation.navigate("NameScreen");
+    if (otp != "1567") {
+      Alert.alert("Please enter correct otp code!");
+      return;
+    }
+    fetch("http://13.126.244.224/api/verification", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone: `+91${phone}`,
+        code: 1567,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("res1", res?.data?.token);
+
+        navigation.navigate("NameScreen", {
+          token: res?.data?.token,
+          phone: phone,
+        });
+      })
+      .catch((res) => console.log("error1", res));
   };
 
   return (
@@ -132,7 +157,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAF0FF",
     width: width / 1.4,
     marginVertical: 10,
-    paddingHorizontal: 10,
+    paddingLeft: 30,
     paddingVertical: 9,
   },
   button: {

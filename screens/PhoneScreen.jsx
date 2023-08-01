@@ -22,7 +22,21 @@ const PhoneScreen = () => {
   const [phone, setPhone] = useState("");
 
   const handleGetOtp = () => {
-    navigation.navigate("OtpScreen");
+    if (phone.length != 10) {
+      Alert.alert("Phone number should be of 10 digits");
+      return;
+    }
+    fetch(
+      `http://13.126.244.224/api/verification?phone=%2B91${phone}&signature=xyz`,
+      {
+        method: "GET",
+      }
+    ).then((res) => {
+      console.log("res", res);
+      navigation.navigate("OtpScreen", {
+        phone: phone,
+      });
+    });
   };
 
   return (
@@ -74,6 +88,7 @@ const PhoneScreen = () => {
               onChangeText={setPhone}
               style={styles.inputContainer}
               keyboardType="numeric"
+              maxLength={10}
             />
             <Pressable onPress={handleGetOtp} style={styles.button}>
               <Text style={{ color: "white", fontSize: 25, fontWeight: "800" }}>
@@ -132,7 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAF0FF",
     width: width / 1.4,
     marginVertical: 10,
-    paddingHorizontal: 10,
+    paddingLeft: 30,
     paddingVertical: 9,
   },
   button: {

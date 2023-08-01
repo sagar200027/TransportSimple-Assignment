@@ -16,7 +16,7 @@ const OnboardingNavigator = () => {
       <Stack.Screen name="PhoneScreen" component={PhoneScreen} />
       <Stack.Screen name="OtpScreen" component={OtpScreen} />
       <Stack.Screen name="NameScreen" component={NameScreen} />
-      <Stack.Screen name="MainNavigator" component={MainNavigator} />
+      {/* <Stack.Screen name="MainNavigator" component={MainNavigator} /> */}
     </Stack.Navigator>
   );
 };

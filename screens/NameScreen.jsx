@@ -14,16 +14,46 @@ import { useNavigation } from "@react-navigation/native";
 import { baseURL } from "../Constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import { useDispatch } from "react-redux";
+import { setUser } from "../redux/Reducers";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const { width, height } = Dimensions.get("window");
 
-const NameScreen = () => {
+const NameScreen = (props) => {
+  const { phone, token } = props?.route?.params;
   const navigation = useNavigation();
+  const disptach = useDispatch();
   const [name, setName] = useState("");
-
-  const handleNext = ()=>{
-    navigation.navigate('MainNavigator')
-  }
+  console.log(phone, token, name);
+  const handleNext = () => {
+    if (!name) {
+      Alert.alert("Please enter your name!");
+      return;
+    }
+    fetch("http://13.126.244.224/api/user", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        phone: `+91${phone}`,
+        name: name,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        const setToken = async () => {
+          await AsyncStorage.setItem("token", token);
+          await AsyncStorage.setItem("user", JSON.stringify(res?.data));
+          // console.log("res 2", res?.data, user);
+          disptach(setUser(res?.data));
+          // navigation.navigate("MainNavigator");
+        };
+        setToken();
+      });
+  };
 
   return (
     <SafeAreaView style={styles.main}>
@@ -73,7 +103,6 @@ const NameScreen = () => {
               value={name}
               onChangeText={setName}
               style={styles.inputContainer}
-              keyboardType="numeric"
             />
             <Pressable onPress={handleNext} style={styles.button}>
               <Text style={{ color: "white", fontSize: 25, fontWeight: "800" }}>
@@ -132,7 +161,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#EAF0FF",
     width: width / 1.4,
     marginVertical: 10,
-    paddingHorizontal: 10,
+    paddingLeft: 30,
     paddingVertical: 9,
   },
   button: {

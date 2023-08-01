@@ -3,22 +3,57 @@ import {
   FlatList,
   Image,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native";
-import React from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TodoCard from "./components/TodoCard";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useDispatch, useSelector } from "react-redux";
+import { homeBgColor } from "../redux/Reducers";
 
 const { width, height } = Dimensions.get("window");
 
 const HomeScreen = () => {
-  const bgColor = "#07B594";
+  // const bgColor = "#07B594";
   const navigation = useNavigation();
+  const [taskList, setTaskList] = useState([]);
+  const dispatch = useDispatch();
+  const { homeColor } = useSelector((state) => state.sliceComp);
+  // console.log('bg home',homeColor);
+
+  useFocusEffect(
+    useCallback(() => {
+      const todosCall = async () => {
+        const token = await AsyncStorage.getItem("token");
+        const user = await AsyncStorage.getItem("user");
+        console.log("token", token, user);
+        fetch(`http://13.126.244.224/api/task?phone=%2B91${"7206723227"}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((res) => {
+            // console.log("todos list", res?.data?.task);
+            const arr = res?.data?.task?.reverse();
+            setTaskList(arr);
+            const statusArray = arr.map((item) => item.status);
+            dispatch(homeBgColor(statusArray));
+          });
+      };
+      todosCall();
+    }, [])
+  );
+
   return (
-    <SafeAreaView style={[styles.main, { backgroundColor: bgColor }]}>
+    <SafeAreaView style={[styles.main, { backgroundColor: homeColor }]}>
       <View style={styles.header}>
         <Image
           style={styles.imageStyle}
@@ -26,8 +61,8 @@ const HomeScreen = () => {
         />
         <Text style={styles.homeTextStyle}>Home</Text>
       </View>
-      <View style={styles.body}>
-        <View style={{ flex: 1, paddingHorizontal: 15 }}>
+      <ScrollView style={styles.body}>
+        <View style={{ paddingHorizontal: 15 }}>
           <Pressable
             onPress={() => {
               navigation.navigate("TodoScreen");
@@ -38,18 +73,23 @@ const HomeScreen = () => {
               CREATE
             </Text>
           </Pressable>
-
-          <FlatList
-            data={[0, 1, 2, 3, 4]}
-            ItemSeparatorComponent={() => {
-              return <View style={{ height: 20 }} />;
-            }}
-            renderItem={({ item }) => {
-              return <TodoCard />;
-            }}
-          />
         </View>
-      </View>
+        <FlatList
+          data={taskList}
+          ItemSeparatorComponent={() => {
+            return <View style={{ height: 20 }} />;
+          }}
+          // contentContainerStyle={{ alignSelf: "center" }}
+          renderItem={({ item }) => {
+            // console.log("todo item", item);
+            return (
+              <View style={{ width: "100%" }}>
+                <TodoCard item={item} />
+              </View>
+            );
+          }}
+        />
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -65,6 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
+    // paddingTop:10
   },
   header: {
     paddingLeft: width / 10,
