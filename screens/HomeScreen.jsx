@@ -15,8 +15,36 @@ import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
 import { homeBgColor } from "../redux/Reducers";
+import { LineChart } from "react-native-chart-kit";
 
 const { width, height } = Dimensions.get("window");
+
+// Sample data for the chart (Replace with your actual data)
+const data = {
+  labels: ["1", "2", "3", "4", "5", "6", "7"], // Daily labels
+  datasets: [
+    {
+      data: [10, 13, 14, 9, 12, 15, 12], // Progress data for variable 1
+      color: (opacity = 1) => `rgba(27,33,181, ${opacity})`, // Red color for variable 1
+      strokeWidth: 2, // Line width for variable 1
+    },
+    {
+      data: [10, 7, 6, 11, 8, 5, 8], // Progress data for variable 2
+      color: (opacity = 1) => `rgba(253, 186, 93, 1)`, // Blue color for variable 2
+      strokeWidth: 2, // Line width for variable 2
+    },
+  ],
+};
+
+const chartConfig = {
+  backgroundGradientFrom: "#ffffff",
+  backgroundGradientTo: "#ffffff",
+  decimalPlaces: 0,
+  color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+  style: {
+    borderRadius: 16,
+  },
+};
 
 const HomeScreen = () => {
   // const bgColor = "#07B594";
@@ -24,7 +52,7 @@ const HomeScreen = () => {
   const [taskList, setTaskList] = useState([]);
   const dispatch = useDispatch();
   const { homeColor } = useSelector((state) => state.sliceComp);
-  console.log('bg home',homeColor);
+  console.log("bg home", homeColor);
 
   useFocusEffect(
     useCallback(() => {
@@ -75,17 +103,36 @@ const HomeScreen = () => {
               CREATE
             </Text>
           </Pressable>
+
+          <LineChart
+            style={{
+              borderRadius: 20,
+              paddingVertical: 10,
+              alignSelf: "center",
+            }}
+            data={data}
+            width={300}
+            height={220}
+            chartConfig={chartConfig}
+          />
         </View>
+
         <FlatList
           data={taskList}
           ItemSeparatorComponent={() => {
             return <View style={{ height: 20 }} />;
           }}
+          showsVerticalScrollIndicator={false}
           // contentContainerStyle={{ alignSelf: "center" }}
-          renderItem={({ item }) => {
+          renderItem={({ item, index }) => {
             // console.log("todo item", item);
             return (
-              <View style={{ width: "100%" }}>
+              <View
+                style={{
+                  width: "100%",
+                  marginBottom: index == taskList.legnth - 1 ? 10 : 0,
+                }}
+              >
                 <TodoCard item={item} todosCall={todosCall} />
               </View>
             );
@@ -107,7 +154,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    // paddingTop:10
   },
   header: {
     paddingLeft: width / 10,

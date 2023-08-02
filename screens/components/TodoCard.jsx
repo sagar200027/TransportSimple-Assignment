@@ -47,9 +47,7 @@ const TodoCard = ({ item, todosCall }) => {
   return (
     <Pressable
       onPress={() => {
-        if (item?.status==="active") {
-          setExpanded((prev) => !prev);
-        }
+        setExpanded((prev) => !prev);
       }}
       style={[
         styles.main,
@@ -73,7 +71,7 @@ const TodoCard = ({ item, todosCall }) => {
       </View>
       {expanded && <Text style={styles.todoDetailsText}>{item?.details}</Text>}
       <Text style={{ color: "#D9D9D9" }}>Dec 16 16:00 - 17:00</Text>
-      {expanded && (
+      {expanded && item?.status === "active" && (
         <View style={styles.buttonsContiner}>
           <Pressable
             onPress={() => {
