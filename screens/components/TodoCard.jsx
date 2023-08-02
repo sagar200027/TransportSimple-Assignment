@@ -30,27 +30,30 @@ const TodoCard = ({ item, todosCall }) => {
       .then((res) => res.json())
       .then((res) => {
         console.log("update task", res);
-        setBgColor("white");
+        // setBgColor("white");
         todosCall();
       })
       .catch((err) => {});
   };
 
   useEffect(() => {
-    if (item?.status == "completed") {
-      setBgColor("white");
+    if (item?.status === "completed") {
+      console.log("check status", item?.status, bgColor);
+      // setBgColor("white");
     }
-  }, []);
+    // console.log("status", item?.status);
+  }, [item]);
 
   return (
     <Pressable
       onPress={() => {
-        setExpanded((prev) => !prev);
+        if (item?.status==="active") {
+          setExpanded((prev) => !prev);
+        }
       }}
-      disabled={bgColor == "white" ? true : false}
       style={[
         styles.main,
-        { backgroundColor: item?.status == "completed" ? "white" : bgColor },
+        { backgroundColor: item?.status === "completed" ? "white" : bgColor },
       ]}
     >
       <View

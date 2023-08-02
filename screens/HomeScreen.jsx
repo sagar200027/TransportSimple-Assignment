@@ -24,7 +24,7 @@ const HomeScreen = () => {
   const [taskList, setTaskList] = useState([]);
   const dispatch = useDispatch();
   const { homeColor } = useSelector((state) => state.sliceComp);
-  // console.log('bg home',homeColor);
+  console.log('bg home',homeColor);
 
   useFocusEffect(
     useCallback(() => {
@@ -116,7 +116,8 @@ const styles = StyleSheet.create({
     marginVertical: width / 10,
   },
   createButton: {
-    backgroundColor: "#F82626",
+    backgroundColor:
+      "radial-gradient(rgba(248, 38, 38, 1), rgba(253, 57, 57, 0.79))",
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 12,

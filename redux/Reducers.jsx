@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   user: null,
-  homeColor: "#07B594",
+  homeColor: "linear-gradient(rgba(7, 181, 148, 1), rgba(255, 255, 255, 1))",
 };
 
 const sliceComp = createSlice({
@@ -27,12 +27,15 @@ const sliceComp = createSlice({
         }
       });
       if (countCompleted == arr.length) {
-        state.homeColor = "#07B594";
+        state.homeColor =
+          "linear-gradient(rgba(7, 181, 148, 1), rgba(255, 255, 255, 1))";
       } else {
         if (countUnCompleted == arr.length) {
-          state.homeColor = "#F82323";
+          state.homeColor =
+            "linear-gradient(rgba(248, 35, 35, 1), rgba(255, 255, 255, 1))";
         } else {
-          state.homeColor = "#F89623";
+          state.homeColor =
+            "linear-gradient(rgba(248, 150, 35, 1), rgba(255, 255, 255, 1))";
         }
       }
       console.log(

@@ -13,13 +13,12 @@ const Main = () => {
   useEffect(() => {
     const getToken = async () => {
       const token = await AsyncStorage.getItem("token");
-      console.log();
       if (token) {
         setIsLoggedIn(true);
       }
       getToken();
     };
-  });
+  },[]);
 
   return (
     <SafeAreaView style={styles.main}>
